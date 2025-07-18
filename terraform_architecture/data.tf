@@ -1,5 +1,5 @@
 # Data Lookup for Ubuntu AMI
-data "aws_ami" "ubuntu" {
+data "aws_ami" "ubuntu_ami" {
   most_recent = true
 
   owners = ["099720109477"]  # Canonical (official Ubuntu)
