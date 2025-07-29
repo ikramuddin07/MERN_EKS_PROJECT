@@ -12,20 +12,6 @@ sudo apt-get install -y ca-certificates curl wget gnupg lsb-release software-pro
 DISTRO_CODENAME=${UBUNTU_CODENAME:-$VERSION_CODENAME}
 
 # -----------------------------------------------------------------------------
-# Jenkins Installation
-# -----------------------------------------------------------------------------
-curl -fsSL https://pkg.jenkins.io/debian/jenkins.io.key | sudo tee \
-  /usr/share/keyrings/jenkins-keyring.asc > /dev/null
-echo "deb [signed-by=/usr/share/keyrings/jenkins-keyring.asc] https://pkg.jenkins.io/debian binary/" | \
-  sudo tee /etc/apt/sources.list.d/jenkins.list > /dev/null
-sudo apt-get update -y
-sudo apt-get install -y openjdk-17-jdk jenkins
-
-# Enable and start Jenkins
-sudo systemctl enable jenkins
-sudo systemctl start jenkins
-
-# -----------------------------------------------------------------------------
 # Docker Installation
 # -----------------------------------------------------------------------------
 sudo mkdir -p /etc/apt/keyrings
@@ -38,26 +24,12 @@ echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.
 sudo apt-get update -y
 sudo apt-get install -y docker-ce docker-ce-cli containerd.io
 
-# Add Jenkins and Ubuntu user to docker group
-sudo usermod -aG docker jenkins
+# Add Ubuntu user to docker group
 sudo usermod -aG docker ubuntu
 
 # Enable and start Docker
 sudo systemctl enable docker
 sudo systemctl start docker
-
-# -----------------------------------------------------------------------------
-# Wait until Docker is ready
-# -----------------------------------------------------------------------------
-until sudo docker info >/dev/null 2>&1; do
-    echo "Waiting for Docker to start..."
-    sleep 3
-done
-
-# -----------------------------------------------------------------------------
-# Sonarqube Docker Container
-# -----------------------------------------------------------------------------
-sudo docker run -d --name sonar --restart unless-stopped -p 9000:9000 sonarqube:lts-community
 
 # -----------------------------------------------------------------------------
 # AWS CLI v2 Installation
@@ -80,15 +52,6 @@ rm kubectl
 curl --silent --location "https://github.com/weaveworks/eksctl/releases/latest/download/eksctl_$(uname -s)_amd64.tar.gz" | \
   tar xz -C /tmp
 sudo mv /tmp/eksctl /usr/local/bin
-
-# -----------------------------------------------------------------------------
-# Terraform Installation
-# -----------------------------------------------------------------------------
-curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/hashicorp.gpg
-echo "deb [signed-by=/etc/apt/keyrings/hashicorp.gpg] https://apt.releases.hashicorp.com $DISTRO_CODENAME main" | \
-  sudo tee /etc/apt/sources.list.d/hashicorp.list > /dev/null
-sudo apt-get update -y
-sudo apt-get install -y terraform
 
 # -----------------------------------------------------------------------------
 # Helm Installation
@@ -114,12 +77,9 @@ sudo apt-get install -y trivy
 # -----------------------------------------------------------------------------
 # Print software versions for verification
 echo "==== Installed Versions ===="
-java -version
-jenkins --version || echo "Jenkins may not report version yet"
 docker --version
 aws --version
 kubectl version --client
 eksctl version
-terraform -version
 helm version
 trivy --version

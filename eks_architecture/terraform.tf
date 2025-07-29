@@ -1,0 +1,15 @@
+terraform {
+  required_version = "~> 1.12.0"
+  cloud {
+    organization = "ikramuddin-terraform-cloud-personal"
+    workspaces {
+      name = "mern_eks_infra"
+    }
+  }
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = "6.3.0"
+    }
+  }
+}
