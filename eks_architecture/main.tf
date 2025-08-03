@@ -42,28 +42,74 @@ data "aws_iam_instance_profile" "existing_profile" {
 
 # Calling the security groups module
 module "security_groups" {
-  source = "./modules/security_groups"
-  vpc_id = module.mern_vpc.vpc_id
+  source  = "./modules/security_groups"
+  vpc_id  = module.mern_vpc.vpc_id
   sg_name = var.sg_name
 }
 
 # Calling the EC2 Module
 module "jump_ec2" {
-  source = "./modules/ec2"
-  ami_id = data.aws_ami.ubuntu.id
-  vpc_id = module.mern_vpc.vpc_id
-  instance_type = var.instance_type
-  subnet_id = module.mern_vpc.public_subnet_ids[0]
-  availability_zone = var.availability_zone
-  user_data = file("modules/ec2/jump_setup.sh")
-  security_group_ids = [ module.security_groups.basic_sg_id ] # Make sure to add the output to take it as input here
+  source               = "./modules/ec2"
+  ami_id               = data.aws_ami.ubuntu.id
+  vpc_id               = module.mern_vpc.vpc_id
+  instance_type        = var.instance_type
+  subnet_id            = module.mern_vpc.public_subnet_ids[0]
+  availability_zone    = var.availability_zone
+  user_data            = file("modules/ec2/jump_setup.sh")
+  security_group_ids   = [module.security_groups.basic_sg_id] # Make sure to add the output to take it as input here
   iam_instance_profile = data.aws_iam_instance_profile.existing_profile.name
-  root_volume_size = var.root_volume_size
-  root_volume_type = var.root_volume_type
-  instance_name = var.instance_name
+  root_volume_size     = var.root_volume_size
+  root_volume_type     = var.root_volume_type
+  instance_name        = var.instance_name
 
   depends_on = [
     module.mern_vpc,
     module.security_groups
   ]
+}
+
+###################################
+# EKS and IAM deployment
+###################################
+
+locals {
+  org = "mern-stack-org"
+  env = var.env
+}
+
+module "iam" {
+  source                          = "./modules/iam"
+  cluster-name                    = var.cluster_name
+  is_eks_role_enabled             = true
+  is_eks_nodegroup_role_enabled   = true
+}
+
+module "eks" {
+  source = "./modules/eks"
+
+  is-eks-cluster-enabled = true
+  cluster-name           = var.cluster_name
+  cluster-version        = var.cluster_version
+  env                    = var.env
+
+  endpoint-private-access = false
+  endpoint-public-access  = true
+
+  ondemand_instance_types      = var.ondemand_instance_types
+  spot_instance_types          = var.spot_instance_types
+
+  desired_capacity_on_demand = var.desired_capacity_on_demand
+  min_capacity_on_demand     = var.min_capacity_on_demand
+  max_capacity_on_demand     = var.max_capacity_on_demand
+
+  desired_capacity_spot = var.desired_capacity_spot
+  min_capacity_spot     = var.min_capacity_spot
+  max_capacity_spot     = var.max_capacity_spot
+
+  addons = var.eks_addons
+
+  public_subnet_ids = data.terraform_remote_state.vpc.outputs.public_subnet_ids
+
+  eks_cluster_role_arn     = module.iam.eks_cluster_role_arn
+  eks_nodegroup_role_arn   = module.iam.eks_node_role_arn
 }

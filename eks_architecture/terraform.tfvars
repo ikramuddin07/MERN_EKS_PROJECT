@@ -22,3 +22,5 @@ root_volume_type = "gp2"
 instance_name = "Jump-EC2-Instance"
 availability_zone = "us-east-1a"
 sg_name = "jump_sg"
+
+# EKS Cluster Assignments
