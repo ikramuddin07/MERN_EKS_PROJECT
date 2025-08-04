@@ -1,12 +1,12 @@
 variable "vpc_name" {
-    description = "Name of the VPC"
-    type = string
-  
+  description = "Name of the VPC"
+  type        = string
+
 }
 
 variable "vpc_cidr" {
   description = "CIDR Block to be set for the VPC"
-  type = string
+  type        = string
 }
 
 variable "private_subnets" {
@@ -21,15 +21,15 @@ variable "public_subnets" {
 
 variable "igw_name" {
   description = "Name of the Internet Gateway"
-  type = string
+  type        = string
 }
 
 variable "nat_eip_name" {
   description = "Name of the Elastic IP associated with the NAT gateway"
-  type = string
+  type        = string
 }
 
 variable "nat_gateway_name" {
   description = "Name of the NAT Gateway deployed"
-  type = string
+  type        = string
 }

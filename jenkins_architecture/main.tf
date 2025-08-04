@@ -35,18 +35,19 @@ data "aws_ami" "ubuntu" {
 module "security_groups" {
   source = "./modules/security_groups"
   vpc_id = data.aws_vpc.default.id
+  cidr_ipv4 = var.cidr_ipv4
 }
 
 # Calling the IAM Roles Module
 module "ec2_admin_iam_role" {
   source     = "./modules/iam"
-  role_name  = "EC2-ADMIN-ACCESS"
-  policy_arn = "arn:aws:iam::aws:policy/AdministratorAccess"
+  role_name  = var.role_name
+  policy_arn = var.policy_arn
 }
 
 # Before EC2 can use IAM role, the resource must be created first
 resource "aws_iam_instance_profile" "ec2_profile" {
-  name = "EC2-ADMIN-ACCESS-PROFILE"
+  name = var.ec2_profile_name
   role = module.ec2_admin_iam_role.role_name
 }
 
@@ -54,13 +55,14 @@ resource "aws_iam_instance_profile" "ec2_profile" {
 # Create Jenkins EC2 instance using module
 module "jenkins_instance" {
   source               = "./modules/ec2"
+  env = var.env
   ami_id               = data.aws_ami.ubuntu.id
-  availability_zone    = "us-east-1a"
-  instance_type        = "t2.2xlarge"
-  root_volume_size     = 30
-  root_volume_type     = "gp2"
+  availability_zone    = var.availability_zone
+  instance_type        = var.instance_type
+  root_volume_size     = var.root_volume_size
+  root_volume_type     = var.root_volume_type
   subnet_id            = data.aws_subnets.default.ids[0]
-  instance_name        = "Jenkins-Instance"
+  instance_name        = var.instance_name
   user_data            = file("modules/ec2/jenkins_setup.sh")
   vpc_id               = data.aws_vpc.default.id
   security_group_ids   = [module.security_groups.jenkins_sg_id]

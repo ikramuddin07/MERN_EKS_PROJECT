@@ -21,13 +21,13 @@ variable "subnet_id" {
 
 variable "vpc_id" {
   description = "VPC ID"
-  type = string
+  type        = string
 }
 
 
 variable "root_volume_size" {
   description = "value for the root volume size in GB"
-  type = number
+  type        = number
 }
 
 variable "root_volume_type" {
@@ -57,4 +57,9 @@ variable "iam_instance_profile" {
   description = "The name of the IAM instance profile"
   type        = string
   default     = null
+}
+
+variable "env" {
+  description = "Environment of the EC2 instance"
+  type = string
 }

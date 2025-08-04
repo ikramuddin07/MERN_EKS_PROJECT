@@ -138,6 +138,14 @@ variable "max_capacity_spot" {
 }
 
 variable "eks_addons" {
-  description = "List of EKS addons to enable"
-  type        = list(string)
+  description = "List of EKS addons with name and version"
+  type = list(object({
+    name    = string
+    version = string
+  }))
+}
+
+variable "cidr_ipv4" {
+  description = "IP from which the resource is allowed to be connected from"
+  type = string
 }

@@ -19,42 +19,38 @@ resource "aws_security_group" "jenkins_sg" {
 # Inbound Rules
 resource "aws_vpc_security_group_ingress_rule" "jenkins_http" {
   security_group_id = aws_security_group.jenkins_sg.id
-  cidr_ipv4         = "49.37.179.251/32"
-  #cidr_ipv4 = "0.0.0.0/0"
-  from_port         = 80
-  to_port           = 80
-  ip_protocol       = "tcp"
-  description       = "Allow HTTP"
+  cidr_ipv4         = var.cidr_ipv4
+  from_port   = 80
+  to_port     = 80
+  ip_protocol = "tcp"
+  description = "Allow HTTP"
 }
 
 resource "aws_vpc_security_group_ingress_rule" "jenkins_https" {
   security_group_id = aws_security_group.jenkins_sg.id
-  cidr_ipv4         = "49.37.179.251/32"
-  #cidr_ipv4 = "0.0.0.0/0"
-  from_port         = 443
-  to_port           = 443
-  ip_protocol       = "tcp"
-  description       = "Allow HTTPS"
+  cidr_ipv4         = var.cidr_ipv4
+  from_port   = 443
+  to_port     = 443
+  ip_protocol = "tcp"
+  description = "Allow HTTPS"
 }
 
 resource "aws_vpc_security_group_ingress_rule" "jenkins_jenkins" {
   security_group_id = aws_security_group.jenkins_sg.id
-  cidr_ipv4         = "49.37.179.251/32"
-  #cidr_ipv4 = "0.0.0.0/0"
-  from_port         = 8080
-  to_port           = 8080
-  ip_protocol       = "tcp"
-  description       = "Allow Jenkins UI"
+  cidr_ipv4         = var.cidr_ipv4
+  from_port   = 8080
+  to_port     = 8080
+  ip_protocol = "tcp"
+  description = "Allow Jenkins UI"
 }
 
 resource "aws_vpc_security_group_ingress_rule" "jenkins_sonarqube" {
   security_group_id = aws_security_group.jenkins_sg.id
-  cidr_ipv4         = "49.37.179.251/32"
-  #cidr_ipv4 = "0.0.0.0/0"
-  from_port         = 9000
-  to_port           = 9000
-  ip_protocol       = "tcp"
-  description       = "Allow SonarQube UI"
+  cidr_ipv4         = var.cidr_ipv4
+  from_port   = 9000
+  to_port     = 9000
+  ip_protocol = "tcp"
+  description = "Allow SonarQube UI"
 }
 
 # Outbound (Allow All)

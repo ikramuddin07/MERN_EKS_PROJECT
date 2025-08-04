@@ -44,6 +44,7 @@ data "aws_iam_instance_profile" "existing_profile" {
 module "security_groups" {
   source  = "./modules/security_groups"
   vpc_id  = module.mern_vpc.vpc_id
+  cidr_ipv4 = var.cidr_ipv4
   sg_name = var.sg_name
 }
 
@@ -56,7 +57,7 @@ module "jump_ec2" {
   subnet_id            = module.mern_vpc.public_subnet_ids[0]
   availability_zone    = var.availability_zone
   user_data            = file("modules/ec2/jump_setup.sh")
-  security_group_ids   = [module.security_groups.basic_sg_id] # Make sure to add the output to take it as input here
+  security_group_ids   = [module.security_groups.basic_sg_id]
   iam_instance_profile = data.aws_iam_instance_profile.existing_profile.name
   root_volume_size     = var.root_volume_size
   root_volume_type     = var.root_volume_type
@@ -78,10 +79,10 @@ locals {
 }
 
 module "iam" {
-  source                          = "./modules/iam"
-  cluster-name                    = var.cluster_name
-  is_eks_role_enabled             = true
-  is_eks_nodegroup_role_enabled   = true
+  source                        = "./modules/iam"
+  cluster-name                  = var.cluster_name
+  is_eks_role_enabled           = true
+  is_eks_nodegroup_role_enabled = true
 }
 
 module "eks" {
@@ -95,8 +96,8 @@ module "eks" {
   endpoint-private-access = false
   endpoint-public-access  = true
 
-  ondemand_instance_types      = var.ondemand_instance_types
-  spot_instance_types          = var.spot_instance_types
+  ondemand_instance_types = var.ondemand_instance_types
+  spot_instance_types     = var.spot_instance_types
 
   desired_capacity_on_demand = var.desired_capacity_on_demand
   min_capacity_on_demand     = var.min_capacity_on_demand
@@ -108,8 +109,31 @@ module "eks" {
 
   addons = var.eks_addons
 
-  public_subnet_ids = data.terraform_remote_state.vpc.outputs.public_subnet_ids
+  public_subnet_ids  = module.mern_vpc.public_subnet_ids
+  private_subnet_ids = module.mern_vpc.private_subnet_ids
+  vpc_id             = module.mern_vpc.vpc_id
 
-  eks_cluster_role_arn     = module.iam.eks_cluster_role_arn
-  eks_nodegroup_role_arn   = module.iam.eks_node_role_arn
+  eks_cluster_role_arn   = module.iam.eks_cluster_role_arn
+  eks_nodegroup_role_arn = module.iam.eks_node_role_arn
+
+  security_group_ids = [module.security_groups.eks_cluster_sg.id]
+
+  depends_on = [
+    module.mern_vpc,
+    module.iam
+  ]
+}
+
+# EKS Data module for OIDC and other data sources
+module "eks_data" {
+  source = "./modules/eks_data"
+
+  cluster_name              = var.cluster_name
+  cluster_oidc_issuer_url   = module.eks.cluster_oidc_issuer_url
+  cluster_oidc_provider_arn = module.eks.cluster_oidc_provider_arn
+  cluster_addons            = [for addon in var.eks_addons : addon.name]
+
+  depends_on = [
+    module.eks
+  ]
 }

@@ -9,12 +9,12 @@
 ######################################################
 
 resource "aws_vpc" "vpc" {
-    cidr_block = var.vpc_cidr
+  cidr_block = var.vpc_cidr
 
-    tags = {
-      Name = var.vpc_name
-    }
-  
+  tags = {
+    Name = var.vpc_name
+  }
+
 }
 
 ######################################################
@@ -25,10 +25,10 @@ data "aws_availability_zones" "available" {}
 
 # Create the public subnets
 resource "aws_subnet" "public_subnets" {
-  for_each = var.public_subnets
-  vpc_id = aws_vpc.vpc.id
-  cidr_block = cidrsubnet(var.vpc_cidr, 8, each.value + 100)
-  availability_zone = data.aws_availability_zones.available.names[each.value]
+  for_each                = var.public_subnets
+  vpc_id                  = aws_vpc.vpc.id
+  cidr_block              = cidrsubnet(var.vpc_cidr, 8, each.value + 100)
+  availability_zone       = data.aws_availability_zones.available.names[each.value]
   map_public_ip_on_launch = true
 
   tags = {
@@ -38,11 +38,11 @@ resource "aws_subnet" "public_subnets" {
 
 # Create the private subnets
 resource "aws_subnet" "private_subnets" {
-  for_each = var.private_subnets
-  vpc_id = aws_vpc.vpc.id
-  cidr_block = cidrsubnet(var.vpc_cidr, 8, each.value)
+  for_each          = var.private_subnets
+  vpc_id            = aws_vpc.vpc.id
+  cidr_block        = cidrsubnet(var.vpc_cidr, 8, each.value)
   availability_zone = data.aws_availability_zones.available.names[each.value]
-  
+
   tags = {
     Name = each.key
   }
@@ -63,8 +63,8 @@ resource "aws_internet_gateway" "igw" {
 # Defining to use Elastic IP for NAT Gateway
 ######################################################
 resource "aws_eip" "nat_eip" {
-  domain = "vpc"
-  depends_on = [ aws_internet_gateway.igw ]
+  domain     = "vpc"
+  depends_on = [aws_internet_gateway.igw]
 
   tags = {
     Name = var.nat_eip_name
@@ -76,8 +76,8 @@ resource "aws_eip" "nat_eip" {
 ######################################################
 resource "aws_nat_gateway" "nat_gateway" {
   allocation_id = aws_eip.nat_eip.id
-  subnet_id = values(aws_subnet.public_subnets)[0].id
-  depends_on = [ aws_internet_gateway.igw ]
+  subnet_id     = values(aws_subnet.public_subnets)[0].id
+  depends_on    = [aws_internet_gateway.igw]
 
   tags = {
     Name = var.nat_gateway_name
@@ -119,13 +119,13 @@ resource "aws_route_table" "private_route_table" {
 
 # Create route table association for public subnets
 resource "aws_route_table_association" "public" {
-  for_each = aws_subnet.public_subnets
-  subnet_id = each.value.id
+  for_each       = aws_subnet.public_subnets
+  subnet_id      = each.value.id
   route_table_id = aws_route_table.public_route_table.id
 }
 
 resource "aws_route_table_association" "private" {
-  for_each = aws_subnet.private_subnets
-  subnet_id = each.value.id
+  for_each       = aws_subnet.private_subnets
+  subnet_id      = each.value.id
   route_table_id = aws_route_table.private_route_table.id
 }

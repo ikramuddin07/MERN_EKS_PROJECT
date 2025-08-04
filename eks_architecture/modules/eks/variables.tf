@@ -65,3 +65,33 @@ variable "addons" {
     version = string
   }))
 }
+
+variable "public_subnet_ids" {
+  description = "List of public subnet IDs for EKS cluster"
+  type        = list(string)
+}
+
+variable "private_subnet_ids" {
+  description = "List of private subnet IDs for EKS cluster"
+  type        = list(string)
+}
+
+variable "vpc_id" {
+  description = "VPC ID for EKS cluster"
+  type        = string
+}
+
+variable "eks_cluster_role_arn" {
+  description = "ARN of the IAM role for EKS cluster"
+  type        = string
+}
+
+variable "eks_nodegroup_role_arn" {
+  description = "ARN of the IAM role for EKS node groups"
+  type        = string
+}
+
+variable "security_group_ids" {
+  description = "Security Group for the EKS Cluster"
+  type        = list(string)
+}
