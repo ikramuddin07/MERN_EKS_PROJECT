@@ -53,6 +53,10 @@ eks_addons = [
   {
     name    = "kube-proxy"
     version = "v1.29.0-eksbuild.2"
+  },
+  {
+    name    = "aws-ebs-csi-driver"
+    version = "v1.46.0-eksbuild.1"
   }
 ]
 
