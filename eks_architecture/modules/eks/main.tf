@@ -1,6 +1,6 @@
 resource "aws_eks_cluster" "eks" {
   count    = var.is-eks-cluster-enabled == true ? 1 : 0
-  name     = var.cluster-name
+  name     = "${var.env}-${var.cluster-name}"
   role_arn = var.eks_cluster_role_arn
   version  = var.cluster-version
 
@@ -18,7 +18,7 @@ resource "aws_eks_cluster" "eks" {
   }
 
   tags = {
-    Name = var.cluster-name
+    Name = "${var.env}-${var.cluster-name}"
     Env  = var.env
   }
 }
