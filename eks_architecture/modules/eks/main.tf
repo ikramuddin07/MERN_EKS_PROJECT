@@ -9,7 +9,7 @@ resource "aws_eks_cluster" "eks" {
     endpoint_private_access = var.endpoint-private-access
     endpoint_public_access  = var.endpoint-public-access
     # security_group_ids      = [aws_security_group.eks-cluster-sg.id]
-    security_group_ids = var.security_group_ids
+    security_group_ids      = var.security_group_ids
   }
 
   access_config {

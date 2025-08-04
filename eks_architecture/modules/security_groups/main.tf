@@ -16,19 +16,19 @@ resource "aws_security_group" "basic_sg" {
 resource "aws_vpc_security_group_ingress_rule" "basic_http" {
   security_group_id = aws_security_group.basic_sg.id
   cidr_ipv4         = var.cidr_ipv4
-  from_port   = 80
-  to_port     = 80
-  ip_protocol = "tcp"
-  description = "Allow HTTP"
+  from_port         = 80
+  to_port           = 80
+  ip_protocol       = "tcp"
+  description       = "Allow HTTP"
 }
 
 resource "aws_vpc_security_group_ingress_rule" "basic_https" {
   security_group_id = aws_security_group.basic_sg.id
   cidr_ipv4         = var.cidr_ipv4
-  from_port   = 443
-  to_port     = 443
-  ip_protocol = "tcp"
-  description = "Allow HTTPS"
+  from_port         = 443
+  to_port           = 443
+  ip_protocol       = "tcp"
+  description       = "Allow HTTPS"
 }
 
 # Outbound (Allow all traffic to leave)

@@ -35,7 +35,7 @@ output "cluster_oidc_provider_url" {
 
 output "cluster_security_group_id" {
   description = "EKS cluster security group ID"
-  value       = aws_security_group.eks-cluster-sg.id
+  value       = var.security_group_ids[0]
 }
 
 output "nodegroup_ondemand_arn" {

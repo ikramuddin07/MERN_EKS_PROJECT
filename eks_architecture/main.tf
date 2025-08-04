@@ -42,10 +42,10 @@ data "aws_iam_instance_profile" "existing_profile" {
 
 # Calling the security groups module
 module "security_groups" {
-  source  = "./modules/security_groups"
-  vpc_id  = module.mern_vpc.vpc_id
+  source    = "./modules/security_groups"
+  vpc_id    = module.mern_vpc.vpc_id
   cidr_ipv4 = var.cidr_ipv4
-  sg_name = var.sg_name
+  sg_name   = var.sg_name
 }
 
 # Calling the EC2 Module
@@ -116,7 +116,7 @@ module "eks" {
   eks_cluster_role_arn   = module.iam.eks_cluster_role_arn
   eks_nodegroup_role_arn = module.iam.eks_node_role_arn
 
-  security_group_ids = [module.security_groups.eks_cluster_sg.id]
+  security_group_ids = [module.security_groups.eks_cluster_sg_id]
 
   depends_on = [
     module.mern_vpc,

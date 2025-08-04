@@ -147,5 +147,5 @@ variable "eks_addons" {
 
 variable "cidr_ipv4" {
   description = "IP from which the resource is allowed to be connected from"
-  type = string
+  type        = string
 }

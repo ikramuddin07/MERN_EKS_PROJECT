@@ -10,5 +10,5 @@ variable "sg_name" {
 
 variable "cidr_ipv4" {
   description = "IP through which the resource is allowed to be connected from"
-  type = string
+  type        = string
 }
