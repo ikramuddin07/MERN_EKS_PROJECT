@@ -23,23 +23,6 @@ resource "aws_eks_cluster" "eks" {
   }
 }
 
-# EKS Cluster Security Group
-# resource "aws_security_group" "eks-cluster-sg" {
-#   name_prefix = "${var.cluster-name}-cluster-sg"
-#   vpc_id      = var.vpc_id
-
-#   egress {
-#     from_port   = 0
-#     to_port     = 0
-#     protocol    = "-1"
-#     cidr_blocks = ["0.0.0.0/0"]
-#   }
-
-#   tags = {
-#     Name = "${var.cluster-name}-cluster-sg"
-#   }
-# }
-
 # OIDC Provider
 data "tls_certificate" "eks-certificate" {
   url = aws_eks_cluster.eks[0].identity[0].oidc[0].issuer
