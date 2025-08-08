@@ -149,3 +149,14 @@ variable "cidr_ipv4" {
   description = "IP from which the resource is allowed to be connected from"
   type        = string
 }
+
+# ECR Variables
+variable "repository1_name" {
+  description = "value"
+  type = string
+}
+
+variable "repository2_name" {
+  description = "value"
+  type = string
+}

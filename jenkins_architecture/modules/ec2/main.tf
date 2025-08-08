@@ -17,7 +17,7 @@ resource "aws_instance" "default_ec2" {
   }
 
   tags = {
-    Name = var.instance_name
+    Name        = var.instance_name
     Environment = var.env
   }
 }

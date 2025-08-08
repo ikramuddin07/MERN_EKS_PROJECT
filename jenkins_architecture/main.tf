@@ -2,6 +2,11 @@ provider "aws" {
   region = "us-east-1"
 }
 
+locals {
+  org = "IIR"
+  env = var.env
+}
+
 # Get default VPC
 data "aws_vpc" "default" {
   default = true
@@ -62,7 +67,7 @@ module "jenkins_instance" {
   root_volume_size     = var.root_volume_size
   root_volume_type     = var.root_volume_type
   subnet_id            = data.aws_subnets.default.ids[0]
-  instance_name        = var.instance_name
+  instance_name        = "${local.org}-${local.env}-${var.instance_name}"
   user_data            = file("modules/ec2/jenkins_setup.sh")
   vpc_id               = data.aws_vpc.default.id
   security_group_ids   = [module.security_groups.jenkins_sg_id]

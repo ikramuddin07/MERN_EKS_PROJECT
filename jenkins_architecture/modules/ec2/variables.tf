@@ -61,5 +61,5 @@ variable "iam_instance_profile" {
 
 variable "env" {
   description = "Environment of the EC2 instance"
-  type = string
+  type        = string
 }
