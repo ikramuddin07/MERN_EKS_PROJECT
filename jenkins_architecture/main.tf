@@ -62,7 +62,6 @@ module "jenkins_instance" {
   source               = "./modules/ec2"
   env = var.env
   ami_id               = data.aws_ami.ubuntu.id
-  availability_zone    = var.availability_zone
   instance_type        = var.instance_type
   root_volume_size     = var.root_volume_size
   root_volume_type     = var.root_volume_type

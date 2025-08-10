@@ -42,12 +42,6 @@ variable "user_data" {
   default     = ""
 }
 
-variable "availability_zone" {
-  description = "Optional availability zone for the instance"
-  type        = string
-  default     = ""
-}
-
 variable "security_group_ids" {
   description = "List of security group IDs to attach to the EC2 instance"
   type        = list(string)
