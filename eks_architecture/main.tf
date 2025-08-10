@@ -116,7 +116,8 @@ module "eks" {
   eks_cluster_role_arn   = module.iam.eks_cluster_role_arn
   eks_nodegroup_role_arn = module.iam.eks_node_role_arn
 
-  security_group_ids = [module.security_groups.eks_cluster_sg_id]
+  security_group_ids        = [module.security_groups.eks_cluster_sg_id]
+  worker_security_group_ids = [module.security_groups.eks_worker_sg_id]
 
   depends_on = [
     module.mern_vpc,
@@ -124,23 +125,11 @@ module "eks" {
   ]
 }
 
-# EKS Data module for OIDC and other data sources
-module "eks_data" {
-  source = "./modules/eks_data"
 
-  cluster_name              = var.cluster_name
-  cluster_oidc_issuer_url   = module.eks.cluster_oidc_issuer_url
-  cluster_oidc_provider_arn = module.eks.cluster_oidc_provider_arn
-  cluster_addons            = [for addon in var.eks_addons : addon.name]
-
-  depends_on = [
-    module.eks
-  ]
-}
 
 # ECR Repositories
 module "ecr_repo1" {
-  source = "./modules/ecr"
+  source          = "./modules/ecr"
   repository_name = var.repository1_name
   tags_all = {
     Name = "ECR-REPO-1"
@@ -148,7 +137,7 @@ module "ecr_repo1" {
 }
 
 module "ecr_repo2" {
-  source = "./modules/ecr"
+  source          = "./modules/ecr"
   repository_name = var.repository2_name
   tags_all = {
     Name = "ECR-REPO-2"

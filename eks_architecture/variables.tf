@@ -153,10 +153,10 @@ variable "cidr_ipv4" {
 # ECR Variables
 variable "repository1_name" {
   description = "value"
-  type = string
+  type        = string
 }
 
 variable "repository2_name" {
   description = "value"
-  type = string
+  type        = string
 }

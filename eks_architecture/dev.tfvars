@@ -29,7 +29,7 @@ cluster_version = "1.29"
 env             = "dev"
 
 # EKS Node Group Configuration
-ondemand_instance_types = ["t3.medium", "t3.small"]
+ondemand_instance_types = ["t3.medium", "t3.small", "t3.large"]
 spot_instance_types     = ["t3.medium", "t3.small"]
 
 desired_capacity_on_demand = 2

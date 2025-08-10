@@ -47,3 +47,23 @@ output "nodegroup_spot_arn" {
   description = "Spot node group ARN"
   value       = aws_eks_node_group.spot-node.arn
 }
+
+output "nodegroup_ondemand_status" {
+  description = "On-demand node group status"
+  value       = aws_eks_node_group.ondemand-node.status
+}
+
+output "nodegroup_spot_status" {
+  description = "Spot node group status"
+  value       = aws_eks_node_group.spot-node.status
+}
+
+output "nodegroup_ondemand_resources" {
+  description = "On-demand node group resources"
+  value       = aws_eks_node_group.ondemand-node.resources
+}
+
+output "nodegroup_spot_resources" {
+  description = "Spot node group resources"
+  value       = aws_eks_node_group.spot-node.resources
+}

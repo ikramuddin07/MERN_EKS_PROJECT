@@ -94,24 +94,3 @@ output "eks_nodegroup_role_arn" {
   value       = module.iam.eks_node_role_arn
 }
 
-# EKS Data Outputs
-output "eks_cluster_certificate_authority_data" {
-  description = "EKS cluster certificate authority data"
-  value       = module.eks_data.cluster_certificate_authority_data
-}
-
-output "eks_cluster_auth_token" {
-  description = "EKS cluster authentication token"
-  value       = module.eks_data.cluster_auth_token
-  sensitive   = true
-}
-
-output "eks_node_groups" {
-  description = "EKS node group names"
-  value       = module.eks_data.node_groups
-}
-
-output "eks_addon_arns" {
-  description = "EKS addon ARNs"
-  value       = module.eks_data.addon_arns
-}

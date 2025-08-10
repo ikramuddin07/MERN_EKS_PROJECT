@@ -32,7 +32,9 @@ resource "aws_subnet" "public_subnets" {
   map_public_ip_on_launch = true
 
   tags = {
-    Name = each.key
+    Name                                    = each.key
+    "kubernetes.io/role/elb"                = "1"
+    "kubernetes.io/cluster/${var.vpc_name}" = "shared"
   }
 }
 
@@ -44,7 +46,9 @@ resource "aws_subnet" "private_subnets" {
   availability_zone = data.aws_availability_zones.available.names[each.value]
 
   tags = {
-    Name = each.key
+    Name                                    = each.key
+    "kubernetes.io/role/internal-elb"       = "1"
+    "kubernetes.io/cluster/${var.vpc_name}" = "shared"
   }
 }
 
@@ -105,8 +109,8 @@ resource "aws_route_table" "public_route_table" {
 resource "aws_route_table" "private_route_table" {
   vpc_id = aws_vpc.vpc.id
   route {
-    cidr_block = "0.0.0.0/0"
-    gateway_id = aws_nat_gateway.nat_gateway.id
+    cidr_block     = "0.0.0.0/0"
+    nat_gateway_id = aws_nat_gateway.nat_gateway.id
   }
 
   tags = {

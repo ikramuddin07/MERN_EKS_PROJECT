@@ -5,10 +5,9 @@ resource "aws_eks_cluster" "eks" {
   version  = var.cluster-version
 
   vpc_config {
-    subnet_ids              = var.public_subnet_ids
+    subnet_ids              = var.private_subnet_ids
     endpoint_private_access = var.endpoint-private-access
     endpoint_public_access  = var.endpoint-public-access
-    # security_group_ids      = [aws_security_group.eks-cluster-sg.id]
     security_group_ids      = var.security_group_ids
   }
 
@@ -32,6 +31,11 @@ resource "aws_iam_openid_connect_provider" "eks-oidc" {
   client_id_list  = ["sts.amazonaws.com"]
   thumbprint_list = [data.tls_certificate.eks-certificate.certificates[0].sha1_fingerprint]
   url             = data.tls_certificate.eks-certificate.url
+
+  tags = {
+    Name = "${var.env}-${var.cluster-name}-oidc"
+    Env  = var.env
+  }
 
   depends_on = [aws_eks_cluster.eks]
 }
@@ -62,12 +66,19 @@ resource "aws_eks_node_group" "ondemand-node" {
     max_size     = var.max_capacity_on_demand
   }
 
-  subnet_ids = var.public_subnet_ids
+  subnet_ids = var.private_subnet_ids
 
   instance_types = var.ondemand_instance_types
   capacity_type  = "ON_DEMAND"
   labels = {
-    type = "ondemand"
+    type      = "ondemand"
+    lifecycle = "on-demand"
+  }
+
+  taint {
+    key    = "dedicated"
+    value  = "on-demand"
+    effect = "NO_SCHEDULE"
   }
 
   update_config {
@@ -92,7 +103,7 @@ resource "aws_eks_node_group" "spot-node" {
     max_size     = var.max_capacity_spot
   }
 
-  subnet_ids = var.public_subnet_ids
+  subnet_ids = var.private_subnet_ids
 
   instance_types = var.spot_instance_types
   capacity_type  = "SPOT"
@@ -108,6 +119,8 @@ resource "aws_eks_node_group" "spot-node" {
     lifecycle = "spot"
   }
   disk_size = 50
+
+
 
   depends_on = [aws_eks_cluster.eks]
 }
