@@ -38,8 +38,8 @@ data "aws_ami" "ubuntu" {
 
 # Calling the security groups module
 module "security_groups" {
-  source = "./modules/security_groups"
-  vpc_id = data.aws_vpc.default.id
+  source    = "./modules/security_groups"
+  vpc_id    = data.aws_vpc.default.id
   cidr_ipv4 = var.cidr_ipv4
 }
 
@@ -60,7 +60,7 @@ resource "aws_iam_instance_profile" "ec2_profile" {
 # Create Jenkins EC2 instance using module
 module "jenkins_instance" {
   source               = "./modules/ec2"
-  env = var.env
+  env                  = var.env
   ami_id               = data.aws_ami.ubuntu.id
   instance_type        = var.instance_type
   root_volume_size     = var.root_volume_size
