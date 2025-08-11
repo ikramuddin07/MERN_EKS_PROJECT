@@ -1,5 +1,5 @@
 # Security Groups tfvars
-cidr_ipv4 = "223.237.167.50/32"
+cidr_ipv4 = "49.37.179.90/32"
 
 
 # IAM tfvars

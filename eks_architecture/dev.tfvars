@@ -60,7 +60,7 @@ eks_addons = [
   }
 ]
 
-cidr_ipv4 = "49.37.177.153/32"
+cidr_ipv4 = "49.37.179.90/32"
 
 # ECR tfvars
 repository1_name = "frontend"
